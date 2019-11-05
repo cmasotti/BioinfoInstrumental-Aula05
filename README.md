@@ -213,9 +213,9 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ ls   # confir
 Neste passo, utilizamos o programa [Annovar](http://annovar.openbioinformatics.org/en/latest/) para adicionar informações genômicas, funcionais e populacionais às variantes identificadas.  
 
 Adicionaremos estas informações:  
-> **Genes e transcritos:** RefSeq [NCBI RefSeqGenes](https://www.ncbi.nlm.nih.gov/refseq/rsg/about/)  
+> **Genes e transcritos:** RefSeq ([NCBI RefSeqGenes](https://www.ncbi.nlm.nih.gov/refseq/rsg/about/))  
 > **Frequência populacional:** Exome Aggregation Consortium ([ExAC](http://exac.broadinstitute.org/))  
-> **Banco de mutações somáticas:** Catalogue of Somatic Mutations in Cancer [COSMIC](https://cancer.sanger.ac.uk/cosmic) 
+> **Banco de mutações somáticas:** Catalogue of Somatic Mutations in Cancer ([COSMIC](https://cancer.sanger.ac.uk/cosmic)) 
 
 Para tanto, precisamos fornecer os datasets (na versão do genoma de referência correto) que pretendemos anotar.
 Primeiramente, criamos o diretório **humandb/**, em que os datasets como *hg38_exac03nontcga.txt* serão salvos.  
@@ -223,6 +223,30 @@ Esses datasets são disponibilizados pelo próprio Annovar mediante *donwload*.
 
 Por limitação de tempo e rede, apenas criaremos os links simbólicos para esses datasets:  
 ```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ cd ../annotation  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ mkdir humandb
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ cd humandb
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ ln -s /mnt/humandb_annovar/* .
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ ls # confira os datasets salvos  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ cd ../
+```  
+Salve os vcfs normalizados no diretório de anotação:  
+```bash  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_SNP_Step2.vcf aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_INDEL_Step2.vcf .
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ls # confira os arquivos salvos  
+TCGA_HF_INDEL_Step2.vcf  TCGA_HF_SNP_Step2.vcf  humandb
+```  
+Para anotar SNPs e INDELs execute as linhas de comando a seguir:
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ table_annovar.pl -vcfinput TCGA_HF_SNP_Step2.vcf humandb/ -buildver hg38 -out annot_SNP -remove -protocol refGene,exac03nontcga,cosmic83 -operation gx,f,f -arg '-splicing 5',, -otherinfo 2> annot_SNPs.log &
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ table_annovar.pl -vcfinput TCGA_HF_INDEL_Step2.vcf humandb/ -buildver hg38 -out annot_INDEL -remove -protocol refGene,exac03nontcga,cosmic83 -operation gx,f,f -arg '-splicing 5',, -otherinfo 2> annot_INDELs.log & 
+```  
+
+Os outputs estarão em dois formatos: VCF e TXT.
+Explore os arquivos TXT (annot_SNP.hg38_multianno.txt e annot_INDEL.hg38_multianno.txt) com os comandos ```less -S, head, tail```.
+
+
+
 
 
     
