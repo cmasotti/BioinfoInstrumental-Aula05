@@ -56,15 +56,42 @@ A estratégia "joint analysis" proposta pelo GATK é, na prática, a identifica�
 
 Para tanto, realizaremos a chamada de variantes em duas etapas:
 
-#### PASSO 4.1: GENOTIPAGEM INTERMEDIÁRIA HAPLOTYPECALLER GVCF 
-No modo GVCF, o HaplotypeCaller é executado para cada amostra e gera um arquivo [VCF](https://en.wikipedia.org/wiki/Variant_Call_Format) genômico intermediário, o **gVCF**, que será usado para genotipagem simultânea de várias amostras de modo muito eficiente. 
+#### PASSO 4.1: GENOTIPAGEM INTERMEDIÁRIA COM HAPLOTYPECALLER GVCF 
+No modo GVCF, o HaplotypeCaller é executado para cada amostra e gera um arquivo [VCF](https://en.wikipedia.org/wiki/Variant_Call_Format) genômico intermediário, o **gVCF**, que será usado para genotipagem simultânea de várias amostras de modo muito eficiente. Por isso, o algoritmo HaplotypeCaller é chamado no modo GVCF (parâmetro ```-ERC GVCF```, que quer dizer *Mode for emitting reference confidence scores*).
+Descrição do parâmetro -ERC:   
+  > The --emitRefConfidence argument is an enumerated type (ReferenceConfidenceMode), which can have one of the following values:   
+  > NONE Regular calling without emitting reference confidence calls.   
+  > BP_RESOLUTION Reference model emitted site by site.   
+  > GVCF Reference model emitted with condensed non-variant blocks, i.e. the GVCF format.   
+
+Nesta etapa também informamos ao programa as regiões genômicas que são alvos de nosso screening genético e, por isso, via parâmetro ```-L  S06588914_Regions_hg38.bed```, fornecemos as coordenadas genômicas no arquivo [.bed](https://genome.ucsc.edu/FAQ/FAQformat.html#format1).   
+Informações em um arquivo BED:
+  > chr1    65509   65625   -       500     +   
+  > chr1    65831   65973   -       500     +     
+  
+Na pasta gvcf/ crie o link simbólico para a região-alvo, que corresponde às regiões genômicas selecionadas para captura do exoma. 
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/S06588914_Regions_hg38.bed .   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ls                                    # confira o arquivo salvo
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ less -S S06588914_Regions_hg38.bed    # veja como é um arquivo .bed   
+```  
 
 Na linha de comando abaixo, geramos o GVCF para cada amostra:   
 ```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-01A_BRCA_bqsr.bam -O gvcf/TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> gvcf/tumor_gvcf.log &   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O gvcf/TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> gvcf/normal_gvcf.log &   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-01A_BRCA_bqsr.bam -O TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions_hg38.bed 2> tumor_gvcf.log & 
 ```  
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions_hg38.bed 2> normal_gvcf.log &   
+```  
+
+#### PASSO 4.2: CHAMADA DE VARIANTES CONJUNTA (JOINT ANALYSIS)   
+Nesta segunda etapa, faremos a chamada de variantes conjunta das duas amostras pré-genotipadas.
+Para tanto, daremos como input ao programa HaplotypeCaller os GVCFs gerados.   
+
+```bash   
+
+
+
 
 
 
