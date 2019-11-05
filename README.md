@@ -11,7 +11,33 @@ O workflow completo abordado nesta aula prática:
 A seguir, executaremos o passo-a-passo da chamada de variantes e refinamento dos dados:
 
 ### PASSO 1: ACESSO AO SERVIDOR REMOTO BIOINFO
-Para relembrar como fazer a conexão ao servidor remoto via Putty, reveja os passos [aqui](https://github.com/cmasotti/BioinfoInstrumental-Aula04/blob/master/Acesso_servidor_remoto.pdf).
+Para relembrar como fazer a conexão ao servidor remoto via Putty, reveja os passos [aqui](https://github.com/cmasotti/BioinfoInstrumental-Aula05/blob/master/Acesso_servidor_remoto.pdf).
+
+### PASSO 2: ORGANIZAR ESTRUTURA DE DIRETÓRIOS NO SERVIDOR REMOTO
+No prompt da linha de comando no servidor remoto, criar diretórios para pré-processamento.
+```bash   
+aluno30@ea046e981f34:~$ 
+aluno30@ea046e981f34:~$ cd /mnt/curso/aluno30/          # diretório de trabalho   
+aluno30@ea046e981f34:/mnt/curso/aluno30$ ls             # confira os arquivos e diretórios existentes   
+aluno30@ea046e981f34:/mnt/curso/aluno30$ mkdir calling  # criar diretório principal de trabalho da aula5  
+aluno30@ea046e981f34:/mnt/curso/aluno30$ cd calling 
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir hg38   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir gvcf   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir combineGVCFs   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir genotype   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir hardFilters   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir leftNormalization  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir annotation   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ ls     # confira os diretórios criados   
+annotation  combineGVCFs  genotype  gvcf  hardFilters  hg38  leftNormalization   
+```   
+
+
+
+
+
+
+
 
 
 
