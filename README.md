@@ -47,14 +47,24 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ cd gvcf      # salvar dados pr�
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ln -s ../../preprocessing/bqsr/TCGA-BH-A1F0-11B_BRCA_bqsr.ba* .  
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ln -s ../../preprocessing/bqsr/TCGA-BH-A1F0-01A_BRCA_bqsr.ba* .  
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ls      # conferir os arquivos salvos
-TCGA-BH-A1F0-01A_BRCA_bqsr.bai  TCGA-BH-A1F0-01A_BRCA_bqsr.bam  TCGA-BH-A1F0-11B_BRCA_bqsr.bai  TCGA-BH-A1F0-11B_BRCA_bqsr.bam ```   
+TCGA-BH-A1F0-01A_BRCA_bqsr.bai  TCGA-BH-A1F0-01A_BRCA_bqsr.bam  TCGA-BH-A1F0-11B_BRCA_bqsr.bai  TCGA-BH-A1F0-11B_BRCA_bqsr.bam 
+``` 
+### PASSO 4: IDENTIFICAÇÃO DE VARIANTES GENÉTICAS
+Neste passo, utilizaremos a ferramenta [HaplotypeCaller](https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_haplotypecaller_HaplotypeCaller.php), também desenvolvida pela equipe do GATK/Broad Institute. O HaplotypeCaller chama SNPs e INDELs simultaneamente utilizando a inferência de haplótipos.
 
-### PASSO 4: IDENTIFICAÇÃO DE VARIANTES GENÉTICAS 
-Identificação de SNPs e INDELs germinativas em um ou mais indivíduos em conjunto num único arquivo VCF.
+A estratégia "joint analysis" proposta pelo GATK é, na prática, a identificação de SNPs e INDELs germinativas em múltiplos indivíduos em conjunto num único arquivo VCF. A genotipagem conjunta aumenta o poder de detecção de variantes pouco frequentes nas populações e a criação de um arquivo intermediário de genotipagem (GVCF) facilita a "escalabilidade" da análise de grandes coortes.
 
+Para tanto, realizaremos a chamada de variantes em duas etapas:
 
+#### PASSO 4.1: GENOTIPAGEM INTERMEDIÁRIA HAPLOTYPECALLER GVCF 
+No modo GVCF, o HaplotypeCaller é executado para cada amostra e gera um arquivo [VCF](https://en.wikipedia.org/wiki/Variant_Call_Format) genômico intermediário, o **gVCF**, que será usado para genotipagem simultânea de várias amostras de modo muito eficiente. 
 
-
+Na linha de comando abaixo, geramos o GVCF para cada amostra:   
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-01A_BRCA_bqsr.bam -O gvcf/TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> gvcf/tumor_gvcf.log &   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O gvcf/TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> gvcf/normal_gvcf.log &   
+```  
 
 
 
