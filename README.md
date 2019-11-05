@@ -31,6 +31,35 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ mkdir annotation
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ ls     # confira os diretórios criados   
 annotation  combineGVCFs  genotype  gvcf  hardFilters  hg38  leftNormalization   
 ```   
+Criar link simbólico para o genoma de referência na pasta hg38/:
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ cd hg38   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/hg38$ ln -s /mnt/dados/aula4/hg38/* .  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/hg38$ ls      # confira os arquivos do hg38 salvos
+hg38.dict  hg38.fa  hg38.fa.amb  hg38.fa.ann  hg38.fa.bwt  hg38.fa.fai  hg38.fa.pac  hg38.fa.sa  
+```  
+
+### PASSO 3: SALVAR E CONFERIR ARQUIVOS DE DADOS PRÉ-PROCESSADOS 
+Na aula passada, realizamos o passo-a-passo da organização e da "limpeza" dos dados para hoje poder prosseguir com a chamada de variantes. No último passo do pré-processamento realizamos o Base Quality Score Recalibration (BQSR) em duas etapas: (1) Detectando sistematicamente os erros de aferição de qualidade da base com [BaseRecalibrator](https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_bqsr_BaseRecalibrator.php) e (2) aplicando os novos escores aos dados com [ApplyBQSR](https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.0.0/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php).   
+
+```bash   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ cd gvcf      # salvar dados pré-processados no diretório do próximo passo   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ln -s ../../preprocessing/bqsr/TCGA-BH-A1F0-11B_BRCA_bqsr.ba* .  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ln -s ../../preprocessing/bqsr/TCGA-BH-A1F0-01A_BRCA_bqsr.ba* .  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ls      # conferir os arquivos salvos
+TCGA-BH-A1F0-01A_BRCA_bqsr.bai  TCGA-BH-A1F0-01A_BRCA_bqsr.bam  TCGA-BH-A1F0-11B_BRCA_bqsr.bai  TCGA-BH-A1F0-11B_BRCA_bqsr.bam ```   
+
+### PASSO 4: IDENTIFICAÇÃO DE VARIANTES GENÉTICAS 
+Identificação de SNPs e INDELs germinativas em um ou mais indivíduos em conjunto num único arquivo VCF.
+
+
+
+
+
+
+
+
+
 
 
 
