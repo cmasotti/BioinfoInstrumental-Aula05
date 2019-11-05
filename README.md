@@ -86,7 +86,7 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions_hg38.bed 2> normal_gvcf.log &   
 ```  
 
-#### PASSO 4.3: FUSÃO DOS ARQUIVOS GVCFs   
+#### PASSO 4.2: FUSÃO DOS ARQUIVOS GVCFs   
 Nesta segunda etapa, apenas geramos um arquivo único com várias amostras, uma fusão dos GVCFs gerados no PASSO 4.1. 
 Nas versões mais recentes do programa GATK, o input para genotipagem propriamente dita com o HaplotypeCaller é de apenas um g.vcf. Para tanto, utilizaremos o programa [CombineGVCFs](https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_variantutils_CombineGVCFs.php).   
 
@@ -102,17 +102,25 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ gatk --java-options "-Xmx4G" Co
 #### PASSO 4.3: CHAMADA DE VARIANTES CONJUNTA (JOINT ANALYSIS)   
 Nesta terceira etapa, faremos a chamada de variantes conjunta das duas amostras pré-genotipadas pelo HaplotypeCaller, fusionadas num único GVCF compactado (TCGAs.g.vcf.gz).
 Para tanto, utilizaremos o programa [GenotypeGVCFs](https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_variantutils_GenotypeGVCFs.php).  
-Essa ferramenta agrega as várias amostras e mescla os escores e probabilidade dos genótipos de uma maneira sofisticada.
+Essa ferramenta agrega as várias amostras e mescla os escores e probabilidade dos genótipos de uma maneira sofisticada.  
+As variantes identificadas são então re-anotadas com base nos novos escores e também no dataset de polimorfismos humanos conhecidos, o dbSNP (por isso também informamos no parâmetro ```-D dbsnp_146.hg38.vcf```.  
 
 Execute a linha de comando abaixo:   
 ```bash   
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/combineGVCFs$ cd ../genotype/   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s ../combineGVCFs/TCGAs.g.vcf.gz .
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s ../combineGVCFs/TCGAs.g.vcf.gz* .
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/S06588914_Regions_hg38.bed . 
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ls            #confira os arquivos salvos
-TCGAs.g.vcf.gz   S06588914_Regions_hg38.bed  
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/dbsnp_146.hg38.vcf* .
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ls       # confira os arquivos salvos
+TCGAs.g.vcf.gz   S06588914_Regions_hg38.bed  dbsnp_146.hg38.vcf dbsnp_146.hg38.vcf.idx
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk GenotypeGVCFs -R ../hg38/hg38.fa -V TCGAs.g.vcf.gz -L S06588914_Regions-hg38.main.bed -D dbsnp_146.hg38.vcf -O TCGAs.vcf 2> genotypes_GVCFs.log &   
-```   
+```  
+
+Ao concluir o PASSO 4.3, teremos o resultado final da chamada de variantes num arquivo [VCF](https://en.wikipedia.org/wiki/Variant_Call_Format).   
+Explore o arquivo final com os comandos ```less -S, head, tail```.   
+
+
+
 
 
 
