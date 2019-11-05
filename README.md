@@ -122,8 +122,9 @@ Ao concluir o PASSO 4.3, teremos o resultado final da chamada de variantes num a
 Explore o arquivo final com os comandos ```less -S, head, tail```.   
 
 ### PASSO 5: HARD FILTERS - APLICAR FILTROS DE QUALIDADE ÀS VARIANTES IDENTIFICADAS   
-Neste passo, avaliaremos as variantes identificadas quanto aos escores de qualidade anotados pelo HaplotypeCaller.  
+![callset_refinement](pipeline_aula05_FilterVariants_small.jpg)   
 
+Neste passo, avaliaremos as variantes identificadas quanto aos escores de qualidade anotados pelo HaplotypeCaller.  
 
 O GATK tem ferramentas altamente sofisticadas para detecção de variantes artefatuais, como o [VQSR, Variant Quality Score Recalibration](), mas essa ferramenta exige que um número mínimo de amostras sejam avaliadas (n>30).  
 
