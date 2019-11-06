@@ -73,19 +73,19 @@ Informações em um arquivo BED:
   
 Na pasta gvcf/ crie o link simbólico para a região-alvo, que corresponde às regiões genômicas selecionadas para captura do exoma. 
 ```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/S06588914_Regions-hg38.main.bed .   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ls                                    # confira o arquivo salvo
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ less -S S06588914_Regions-hg38.main.bed    # veja como é um arquivo .bed   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ln -s /mnt/dados/aula4/references/S06588914_Regions-hg38.main.bed .   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ ls                                    # confira o arquivo salvo
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ less -S S06588914_Regions-hg38.main.bed    # veja como é um arquivo .bed   
 ```  
 
 Na linha de comando abaixo, geramos o GVCF para cada amostra:   
 **tumor: TCGA-BH-A1F0-01A_BRCA** 
 ```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-01A_BRCA_bqsr.bam -O TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> tumor_gvcf.log & 
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-01A_BRCA_bqsr.bam -O TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> tumor_gvcf.log & 
 ```  
 **normal:TCGA-BH-A1F0-11B_BRCA** 
 ```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> normal_gvcf.log &   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ gatk --java-options "-Xmx4G" HaplotypeCaller -R ../hg38/hg38.fa -I TCGA-BH-A1F0-11B_BRCA_bqsr.bam -O TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -ERC GVCF -L S06588914_Regions-hg38.main.bed 2> normal_gvcf.log &   
 ```  
 
 #### PASSO 4.2: FUSÃO DOS ARQUIVOS GVCFs   
@@ -94,11 +94,11 @@ Nas versões mais recentes do programa GATK, o input para genotipagem propriamen
 
 Na linha de comando abaixo, execute o CombineGVCFs:   
 ```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ cd ../combineGVCFs/     
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/gvcf$ cd ../combineGVCFs/     
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/combineGVCFs$ ln -s ../gvcf/*g.vcf.gz .         # faça links simbólicos para os GVCFs gerados.  
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/combineGVCFs$ ln -s ../gvcf/*g.vcf.gz.tbi .     # idem para os indexes   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ ls                                             # confira os arquivos salvos 
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ gatk --java-options "-Xmx4G" CombineGVCFs -R ../hg38/hg38.fa -V TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -V TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -O TCGAs.g.vcf.gz 2> combine.log &   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/combineGVCFs$ ls                                             # confira os arquivos salvos 
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/combineGVCFs$ gatk --java-options "-Xmx4G" CombineGVCFs -R ../hg38/hg38.fa -V TCGA-BH-A1F0-01A_BRCA.g.vcf.gz -V TCGA-BH-A1F0-11B_BRCA.g.vcf.gz -O TCGAs.g.vcf.gz 2> combine.log &   
 ```  
 
 #### PASSO 4.3: CHAMADA DE VARIANTES CONJUNTA (JOINT ANALYSIS)   
@@ -174,77 +174,7 @@ StrandOddsRatio (SOR) 10.0
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/hardFilters$ gatk --java-options "-Xmx2G" VariantFiltration -R ../hg38/hg38.fa -V TCGA_INDEL.vcf --filter-expression "FS > 200.0 || SOR > 10.0 || ReadPosRankSum < -20.0 || InbreedingCoeff < -0.8" --filter-name "HardFilter_INDEL" -O TCGA_HF_INDEL.vcf 2> filterINDEL.log & 
 ```  
 
-### PASSO 6: NORMALIZAÇÃO PARA ANOTAÇÃO
-Neste passo, ajustamos os vcfs para a próxima etapa, a anotação.   
-Algumas considerações a respeito de anotação de arquivos vcs: [Introduction to VCF file and some of its complications] (http://annovar.openbioinformatics.org/en/latest/articles/VCF/).   
-
-Utilizamos o programa [bcftools](http://samtools.github.io/bcftools/bcftools.html), com a função **norm**.
-> About: Left-align and normalize indels; check if REF alleles match the reference; split multiallelic sites into multiple rows; recover multiallelics from multiple rows.  
-> Usage:   bcftools norm [options] <in.vcf.gz>   
-
-O bcftools exige que os arquivos vcfs estejam compactados com [bgzip](http://www.htslib.org/doc/bgzip.html) e indexados com [tabix](http://www.htslib.org/doc/tabix.html).  
-Para tanto, execute bgzip + tabix.  
-```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling$ cd leftNormalization/
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ ln -s ../hardFilters/TCGA_HF_*vcf* .
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ ls   # confira os arquivos salvos
-TCGA_HF_INDEL.vcf  TCGA_HF_INDEL.vcf.idx  TCGA_HF_SNP.vcf  TCGA_HF_SNP.vcf.idx  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bgzip TCGA_HF_SNP.vcf 
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bgzip TCGA_HF_INDEL.vcf
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ tabix TCGA_HF_SNP.vcf.gz 
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ tabix TCGA_HF_INDEL.vcf.gz
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ ls   # confira os arquivos gerados  
-TCGA_HF_INDEL.vcf.gz  TCGA_HF_INDEL.vcf.gz.tbi  TCGA_HF_SNP.vcf.gz  TCGA_HF_SNP.vcf.gz.tbi  
-```  
-
-No primeiro comando (Step1), separamos locos multialélicos em bialélicos (um alelo por linha):  
-```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bcftools norm -m-both -o TCGA_HF_SNP_Step1.vcf TCGA_HF_SNP.vcf.gz
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bcftools norm -m-both -o TCGA_HF_INDEL_Step1.vcf TCGA_HF_INDEL.vcf.gz
-```  
-No segundo comando (Step2), realinhamos as posições genômicas das variantes ("left most position"):  
-```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bcftools norm -f ../hg38/hg38.fa -o TCGA_HF_SNP_Step2.vcf TCGA_HF_SNP_Step1.vcf  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ bcftools norm -f ../hg38/hg38.fa -o TCGA_HF_INDEL_Step2.vcf TCGA_HF_INDEL_Step1.vcf  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ ls   # confira os arquivos gerados
-```  
-
-### PASSO 7: ANOTAÇÃO DOS VCFs  
-Neste passo, utilizamos o programa [Annovar](http://annovar.openbioinformatics.org/en/latest/) para adicionar informações genômicas, funcionais e populacionais às variantes identificadas.  
-
-Adicionaremos estas informações:  
-> **Genes e transcritos:** RefSeq ([NCBI RefSeqGenes](https://www.ncbi.nlm.nih.gov/refseq/rsg/about/))  
-> **Frequência populacional:** Exome Aggregation Consortium ([ExAC](http://exac.broadinstitute.org/))  
-> **Banco de mutações somáticas:** Catalogue of Somatic Mutations in Cancer ([COSMIC](https://cancer.sanger.ac.uk/cosmic)) 
-
-Para tanto, precisamos fornecer os datasets (na versão do genoma de referência correto) que pretendemos anotar.
-Primeiramente, criamos o diretório **humandb/**, em que os datasets como *hg38_exac03nontcga.txt* serão salvos.  
-Esses datasets são disponibilizados pelo próprio Annovar mediante *donwload*.  
-
-Por limitação de tempo e rede, apenas criaremos os links simbólicos para esses datasets:  
-```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/leftNormalization$ cd ../annotation  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ mkdir humandb
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ cd humandb
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ ln -s /mnt/humandb_annovar/* .
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ ls # confira os datasets salvos  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ cd ../
-```  
-Salve os vcfs normalizados no diretório de anotação:  
-```bash  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_SNP_Step2.vcf .   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_INDEL_Step2.vcf .  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ls # confira os arquivos salvos  
-TCGA_HF_INDEL_Step2.vcf  TCGA_HF_SNP_Step2.vcf  humandb
-```  
-Para anotar SNPs e INDELs execute as linhas de comando a seguir:
-```bash   
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ table_annovar.pl -vcfinput TCGA_HF_SNP_Step2.vcf humandb/ -buildver hg38 -out annot_SNP -remove -protocol refGene,exac03nontcga,cosmic83 -operation gx,f,f -arg '-splicing 5',, -otherinfo 2> annot_SNPs.log &
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ table_annovar.pl -vcfinput TCGA_HF_INDEL_Step2.vcf humandb/ -buildver hg38 -out annot_INDEL -remove -protocol refGene,exac03nontcga,cosmic83 -operation gx,f,f -arg '-splicing 5',, -otherinfo 2> annot_INDELs.log & 
-```  
-
-Os outputs estarão em dois formatos: VCF e TXT.
-Explore os arquivos TXT (annot_SNP.hg38_multianno.txt e annot_INDEL.hg38_multianno.txt) com os comandos ```less -S, head, tail```.
+> Explore os arquivos VCFs finais com comandos como **less -S, head, tail**.  
 
 
 
