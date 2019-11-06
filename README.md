@@ -114,7 +114,7 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s ../combineGVCFs/
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/S06588914_Regions-hg38.main.bed . 
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ln -s /mnt/dados/aula4/references/dbsnp_146.hg38.vcf* .
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ ls       # confira os arquivos salvos
-TCGAs.g.vcf.gz   S06588914_Regions-hg38.main.bed  dbsnp_146.hg38.vcf dbsnp_146.hg38.vcf.idx
+TCGAs.g.vcf.gz  TCGAs.g.vcf.gz.tbi S06588914_Regions-hg38.main.bed  dbsnp_146.hg38.vcf dbsnp_146.hg38.vcf.idx
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/genotype$ gatk GenotypeGVCFs -R ../hg38/hg38.fa -V TCGAs.g.vcf.gz -L S06588914_Regions-hg38.main.bed -D dbsnp_146.hg38.vcf -O TCGAs.vcf 2> genotypes_GVCFs.log &   
 ```  
 
