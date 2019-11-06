@@ -232,7 +232,8 @@ aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation/humandb$ cd ../
 ```  
 Salve os vcfs normalizados no diretório de anotação:  
 ```bash  
-aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_SNP_Step2.vcf aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_INDEL_Step2.vcf .
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_SNP_Step2.vcf .   
+aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ln -s ../leftNormalization/TCGA_HF_INDEL_Step2.vcf .  
 aluno30@ea046e981f34:/mnt/curso/aluno30/calling/annotation$ ls # confira os arquivos salvos  
 TCGA_HF_INDEL_Step2.vcf  TCGA_HF_SNP_Step2.vcf  humandb
 ```  
